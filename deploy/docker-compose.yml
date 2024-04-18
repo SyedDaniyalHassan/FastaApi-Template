@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile
+      target: prod
+    image: basic_app:${BASIC_APP_VERSION:-latest}
+    restart: always
+    env_file:
+    - .env
+    environment:
+      BASIC_APP_HOST: 0.0.0.0
+      BASIC_APP_DB_FILE: /db_data/db.sqlite3
+    volumes:
+    - basic_app-db-data:/db_data/
+
+
+
+volumes:
+  basic_app-db-data:
+    name: basic_app-db-data

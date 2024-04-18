@@ -1,0 +1,79 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: basic-app
+  name: basic-app-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: basic-app-app
+  template:
+    metadata:
+      labels:
+        app: basic-app-app
+    spec:
+      containers:
+      - name: app
+        image: basic_app:latest
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: api-port
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        command: ["/bin/sh"]
+        args:
+        - -c
+        - >-
+          python -m basic_app
+        env:
+        - name: BASIC_APP_HOST
+          value: "0.0.0.0"
+        - name: BASIC_APP_WORKERS_COUNT
+          value: "10"
+        resources:
+          limits:
+            memory: "200Mi"
+            cpu: "100m"
+        ports:
+        - containerPort: 8000
+          name: api-port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: basic-app
+  name: basic-app-app-service
+spec:
+  selector:
+    app: basic-app-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: api-port
+    name: api-port
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: basic-app-app
+  namespace: basic-app
+  labels:
+    name: basic-app-app
+spec:
+  rules:
+  - host: basic-app.local
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: basic-app-app-service
+            port:
+              name: api-port
+
+---
