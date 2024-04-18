@@ -1,6 +1,6 @@
 # basic_app
 
-This project was generated using fastapi_template.
+This project is created by Daniyal Hassan, inorder to develop the apps using this as a template.
 
 ## Poetry
 
