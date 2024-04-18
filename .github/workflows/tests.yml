@@ -61,3 +61,21 @@ jobs:
       run: poetry run pytest -vv --cov="basic_app" .
       env:
         BASIC_APP_HOST: "0.0.0.0"
+  build:
+    runs-on: ubuntu-latest
+    needs: pytest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    - name: Install deps and build
+      run: |
+        poetry install
+        poetry build
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: poetry-build
+        path: dist/
