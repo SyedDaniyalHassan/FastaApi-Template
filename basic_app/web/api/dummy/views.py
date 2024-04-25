@@ -31,11 +31,14 @@ async def get_dummy_models(
 async def create_dummy_model(
     new_dummy_object: DummyModelInputDTO,
     dummy_dao: DummyDAO = Depends(),
-) -> None:
+) -> str:
     """
     Creates dummy model in the database.
 
     :param new_dummy_object: new dummy model item.
     :param dummy_dao: DAO for dummy models.
+    :returns: Dummy Data Successfully Created
     """
     await dummy_dao.create_dummy_model(name=new_dummy_object.name)
+
+    return "Dummy Data Successfully Created"
